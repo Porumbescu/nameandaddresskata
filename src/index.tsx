@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { NameForm } from "./name";
+import { AddressForm } from "./address";
+
 
 const App = () => {
   return (
     <div>
-      <h1>Hello World!</h1>
+      <NameForm/>
+      <AddressForm/>
     </div>
   );
 };
