@@ -1,5 +1,4 @@
-import React, { CSSProperties } from "react";
-import { FormFieldContainerProps } from "../form.field.container";
+import React, { CSSProperties } from 'react';
 
 const formContainerStyles = {
   form: {
@@ -11,6 +10,10 @@ const formContainerStyles = {
   } as CSSProperties,
 };
 
-export const SimpleFieldContainer: React.FC<FormFieldContainerProps> = ( { children } ) => {
+interface FormFieldContainerProps {
+  children: React.ReactNode;
+}
+
+export const FormFieldContainer: React.FC<FormFieldContainerProps> = ( { children } ) => {
   return <form style={formContainerStyles.form}>{children}</form>;
 };

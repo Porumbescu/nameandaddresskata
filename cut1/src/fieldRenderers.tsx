@@ -1,9 +1,8 @@
 import React from 'react';
-import { normalizeOptions, Option, toDisplayForm } from "../../utils/utils";
 
+import { normalizeOptions, Option, toDisplayForm } from "./utils";
 
-export type FieldRenderer = (<T, >( id: keyof T, value: T, onChange: ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => void, required: boolean ) => JSX.Element);
-export const renderStringInput: FieldRenderer = <T, > (
+export const renderStringInput = <T, > (
   id: keyof T,
   value: T,
   onChange: ( e: React.ChangeEvent<HTMLInputElement> ) => void,
@@ -19,12 +18,12 @@ export const renderStringInput: FieldRenderer = <T, > (
     aria-label={toDisplayForm ( id as string )}
   />
 );
-
-export const renderDropDown = ( options: Option[] ): FieldRenderer => <T, > (
+export const renderDropDown =( options: Option[]) =><T, > (
   id: keyof T,
   value: T,
   onChange: ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => void,
   required: boolean = true,
+
 ) => (
   <select
     id={id as string}
@@ -42,13 +41,3 @@ export const renderDropDown = ( options: Option[] ): FieldRenderer => <T, > (
     ) )}
   </select>
 );
-
-export type RendererDefn = 'string' | { type: 'dropdown', options: Option[] }
-export type GetRenderer = ( renderer: RendererDefn ) => FieldRenderer;
-export const getRenderer:GetRenderer = ( renderer: RendererDefn ) => {
-  if ( typeof renderer === 'string' ) {
-    return renderStringInput;
-  } else {
-    return renderDropDown ( renderer.options );
-  }
-};
