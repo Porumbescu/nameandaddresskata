@@ -7,6 +7,7 @@ export interface Name {
   title: string;
   firstName: string;
   lastName: string;
+  surnamePrefix: string;
   generationName: string;
   givenName: string;
   "称谓": string;

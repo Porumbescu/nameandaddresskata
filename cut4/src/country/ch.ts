@@ -6,6 +6,7 @@ import { countries } from "./country";
 export const chName: ObjectDefn<Name> = {
   title: { type: 'dropdown', options: [ 'Herr', 'Frau', 'Dr', 'Prof' ] },
   firstName: 'string',
+  surnamePrefix: 'string',
   lastName: 'string',
 }
 export const chAddress: ObjectDefn<Address> = {
