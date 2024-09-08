@@ -15,14 +15,6 @@
     ]
   },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@focuson/lens": "1.44.3",
-    "@focuson/state": "1.44.3",
-    "@laoban/utils": "1.4.45",
-    "@mui/icons-material": "^5.15.10",
-    "@mui/material": "^5.15.10",
-    "debug": "^4.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

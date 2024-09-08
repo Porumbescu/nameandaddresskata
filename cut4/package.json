@@ -1,5 +1,5 @@
 {
-  "name": "name_and_address",
+  "name": "name_and_address4",
   "description": "Names and addresses kata",
   "version": "0.3.11",
   "browserslist": {
@@ -15,6 +15,7 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
 
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

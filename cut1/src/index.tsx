@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { NameForm } from "./name";
-import { AddressForm } from "./address";
-
+import { NameForm } from "./name.form";
+import { AddressForm } from "./address.form";
 
 const App = () => {
   return (
