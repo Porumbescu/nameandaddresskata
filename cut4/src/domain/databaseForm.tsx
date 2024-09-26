@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useComponents } from "../renderers/simpleimpl/use.simple";
 import { ObjectDefn } from "../renderers/RenderObject";
 import { NameAnd } from "@laoban/utils";
-import { lensBuilder, LensAndPath } from "../utils/lensUtils";
+import { lensBuilder, LensAndPath, LensBuilder } from "../utils/lensUtils";
 
 export enum DatabaseType {
   MySQL = 'MySQL',
@@ -111,19 +111,19 @@ export function DisplayConnectionParams({ params }: DisplayConnectionParamsProps
   // Define lenses
   const connectionParamsLens = lensBuilder<Partial<ConnectionParams>>();
   const typeLens = connectionParamsLens.focusOn('type').build();
-  const baseLens = connectionParamsLens.focusOn('base').build();
-  const specificLens = connectionParamsLens.focusOn('specific').build();
+  const baseLensBuilder = connectionParamsLens.focusOn('base');
+  const specificLensBuilder = connectionParamsLens.focusOn('specific');
 
   // Create lenses for base fields
   const baseFieldLenses: { [key: string]: LensAndPath<Partial<ConnectionParams>, any> } = {};
   Object.keys(defns.base || {}).forEach((key) => {
-    baseFieldLenses[key] = baseLens.focusOn(key as keyof BaseConnectionParams).build();
+    baseFieldLenses[key] = baseLensBuilder.focusOn(key as keyof BaseConnectionParams).build();
   });
 
   // Create lenses for specific fields
   const specificFieldLenses: { [key: string]: LensAndPath<Partial<ConnectionParams>, any> } = {};
   Object.keys(defns.specific || {}).forEach((key) => {
-    specificFieldLenses[key] = specificLens.focusOn(key as string).build();
+    specificFieldLenses[key] = specificLensBuilder.focusOn(key as string).build();
   });
 
   return (
