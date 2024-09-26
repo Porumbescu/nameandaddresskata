@@ -1,8 +1,8 @@
 // src/renderers/simpleimpl/simple.field.tsx
 
-import { toDisplayForm, getValueByPath } from "../../utils/utils";
 import React, { CSSProperties } from "react";
 import { FormFieldProps } from "../formfield";
+import { toDisplayForm } from "../../utils/utils";
 
 const fieldStyles = {
   formField: {
@@ -24,23 +24,22 @@ const fieldStyles = {
 };
 
 export const SimpleFormField = <T,>({
-  id,
+  lens,
   value,
   onChange,
   renderInput,
   getRenderer,
   required = true,
 }: FormFieldProps<T>) => {
-  const label = toDisplayForm(id as string);
-  const path = (id as string).split('.');
-  const fieldValue = getValueByPath(value, path);
+  const label = lens.path.join('.');
+  const fieldValue = lens.get(value);
 
   return (
     <div style={fieldStyles.formField}>
-      <label htmlFor={id as string} style={fieldStyles.label}>
-        {label}
+      <label htmlFor={label} style={fieldStyles.label}>
+        {toDisplayForm(label)}
       </label>
-      {getRenderer(renderInput)(id as string, fieldValue, onChange, required)}
+      {getRenderer(renderInput)(label, fieldValue, onChange, required)}
     </div>
   );
 };

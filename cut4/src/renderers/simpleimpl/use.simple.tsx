@@ -5,22 +5,21 @@ import React from "react";
 import { SimpleFormField } from "./simple.field";
 import { getRenderer } from "./simple.field.renderers";
 import { SimpleFieldContainer } from "./simple.form.field.container";
-import { setValueByPath } from "../../utils/utils";
+import { LensAndPath } from "../../utils/lensUtils";
 
 export const useComponents: FieldComponentsFn = <T,>(formData: T, set: (t: T) => void) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const path = name.split('.');
-    const newFormData = setValueByPath(formData, path, value);
+  const handleChange = (lens: LensAndPath<T, any>) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    const newFormData = lens.set(formData, newValue);
     set(newFormData);
   };
   return {
     getRenderer,
-    Field: ({ id, renderer = 'string' }: FieldComponentProps<T>) => (
+    Field: ({ lens, renderer = 'string' }: FieldComponentProps<T>) => (
       <SimpleFormField<T>
-        id={id}
+        lens={lens}
         value={formData}
-        onChange={handleChange}
+        onChange={handleChange(lens)}
         renderInput={renderer}
         getRenderer={getRenderer}
       />

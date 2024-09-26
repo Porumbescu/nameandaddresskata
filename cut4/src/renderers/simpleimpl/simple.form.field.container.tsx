@@ -1,3 +1,5 @@
+// src/renderers/simpleimpl/simple.form.field.container.tsx
+
 import React, { CSSProperties } from "react";
 import { FormFieldContainerProps } from "../form.field.container";
 
@@ -11,6 +13,6 @@ const formContainerStyles = {
   } as CSSProperties,
 };
 
-export const SimpleFieldContainer: React.FC<FormFieldContainerProps> = ( { children } ) => {
+export const SimpleFieldContainer: React.FC<FormFieldContainerProps> = ({ children }) => {
   return <form style={formContainerStyles.form}>{children}</form>;
 };

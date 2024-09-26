@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { useComponents } from "../renderers/simpleimpl/use.simple";
+import { ObjectDefn } from "../renderers/RenderObject";
 import { NameAnd } from "@laoban/utils";
+import { lensBuilder, LensAndPath } from "../utils/lensUtils";
 
 export enum DatabaseType {
   MySQL = 'MySQL',
@@ -18,7 +20,7 @@ interface BaseConnectionParams {
   password: string;
 }
 
-const baseDefn = {
+const baseDefn: ObjectDefn<BaseConnectionParams> = {
   host: 'string',
   port: 'string',
   user: 'string',
@@ -51,27 +53,27 @@ export type ConnectionParams =
   | { type: DatabaseType.SQLServer; base: BaseConnectionParams; specific: SQLServerSpecificParams }
   | { type: DatabaseType.Oracle; base: BaseConnectionParams; specific: OracleSpecificParams };
 
-const mySqlSpecificDefn = {
+const mySqlSpecificDefn: ObjectDefn<MySQLSpecificParams> = {
   database: 'string',
   ssl: 'string',
 };
 
-const postgreSqlSpecificDefn = {
+const postgreSqlSpecificDefn: ObjectDefn<PostgreSQLSpecificParams> = {
   database: 'string',
   ssl: 'string',
 };
 
-const sqlServerSpecificDefn = {
+const sqlServerSpecificDefn: ObjectDefn<SQLServerSpecificParams> = {
   instanceName: 'string',
   encrypt: 'string',
 };
 
-const oracleSpecificDefn = {
+const oracleSpecificDefn: ObjectDefn<OracleSpecificParams> = {
   serviceName: 'string',
   sid: 'string',
 };
 
-export const allDefns: NameAnd<{ base: typeof baseDefn; specific: any }> = {
+export const allDefns: NameAnd<{ base: ObjectDefn<BaseConnectionParams>; specific: ObjectDefn<any> }> = {
   [DatabaseType.MySQL]: {
     base: baseDefn,
     specific: mySqlSpecificDefn,
@@ -103,18 +105,36 @@ export type DisplayConnectionParamsProps = {
 
 export function DisplayConnectionParams({ params }: DisplayConnectionParamsProps) {
   const [connectionParams, setConnectionParams] = useState<Partial<ConnectionParams>>(params || {});
-  const { Field, FieldContainer } = useComponents<ConnectionParams>(connectionParams, setConnectionParams);
+  const { Field, FieldContainer } = useComponents<Partial<ConnectionParams>>(connectionParams, setConnectionParams);
   const defns = (connectionParams?.type && allDefns[connectionParams.type]) || {};
+
+  // Define lenses
+  const connectionParamsLens = lensBuilder<Partial<ConnectionParams>>();
+  const typeLens = connectionParamsLens.focusOn('type').build();
+  const baseLens = connectionParamsLens.focusOn('base').build();
+  const specificLens = connectionParamsLens.focusOn('specific').build();
+
+  // Create lenses for base fields
+  const baseFieldLenses: { [key: string]: LensAndPath<Partial<ConnectionParams>, any> } = {};
+  Object.keys(defns.base || {}).forEach((key) => {
+    baseFieldLenses[key] = baseLens.focusOn(key as keyof BaseConnectionParams).build();
+  });
+
+  // Create lenses for specific fields
+  const specificFieldLenses: { [key: string]: LensAndPath<Partial<ConnectionParams>, any> } = {};
+  Object.keys(defns.specific || {}).forEach((key) => {
+    specificFieldLenses[key] = specificLens.focusOn(key as string).build();
+  });
 
   return (
     <FieldContainer>
-      <Field id="type" renderer={{ type: 'dropdown', options: allTypes }} />
+      <Field lens={typeLens} renderer={{ type: 'dropdown', options: allTypes }} />
       {/* Render Base Connection Parameters */}
       {defns.base && (
         <div>
           <h3>Base Connection Parameters</h3>
           {Object.entries(defns.base).map(([key, defn]) => (
-            <Field key={`base.${key}`} id={`base.${key}`} renderer={defn} />
+            <Field key={`base.${key}`} lens={baseFieldLenses[key]} renderer={defn} />
           ))}
         </div>
       )}
@@ -123,7 +143,7 @@ export function DisplayConnectionParams({ params }: DisplayConnectionParamsProps
         <div>
           <h3>Specific Parameters</h3>
           {Object.entries(defns.specific).map(([key, defn]) => (
-            <Field key={`specific.${key}`} id={`specific.${key}`} renderer={defn} />
+            <Field key={`specific.${key}`} lens={specificFieldLenses[key]} renderer={defn} />
           ))}
         </div>
       )}
