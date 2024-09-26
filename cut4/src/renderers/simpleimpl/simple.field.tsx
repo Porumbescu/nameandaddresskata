@@ -1,5 +1,6 @@
-// Define local styles inside the component
-import { toDisplayForm } from "../../utils/utils";
+// src/renderers/simpleimpl/simple.field.tsx
+
+import { toDisplayForm, getValueByPath } from "../../utils/utils";
 import React, { CSSProperties } from "react";
 import { FormFieldProps } from "../formfield";
 
@@ -22,13 +23,24 @@ const fieldStyles = {
   },
 };
 
-export const SimpleFormField = <T, > ( { id, value, onChange, renderInput, getRenderer, required = true }: FormFieldProps<T> ) => {
-  const label = toDisplayForm ( id as string );
+export const SimpleFormField = <T,>({
+  id,
+  value,
+  onChange,
+  renderInput,
+  getRenderer,
+  required = true,
+}: FormFieldProps<T>) => {
+  const label = toDisplayForm(id as string);
+  const path = (id as string).split('.');
+  const fieldValue = getValueByPath(value, path);
 
   return (
     <div style={fieldStyles.formField}>
-      <label htmlFor={id as string} style={fieldStyles.label}>{label}</label>
-      {getRenderer ( renderInput ) ( id, value, onChange, required )}
+      <label htmlFor={id as string} style={fieldStyles.label}>
+        {label}
+      </label>
+      {getRenderer(renderInput)(id as string, fieldValue, onChange, required)}
     </div>
   );
 };
